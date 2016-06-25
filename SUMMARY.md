@@ -19,3 +19,4 @@
 * [Initializers](Initializers.md)
 * [InnerClass](InnerClass.md)
 * [Inherit](Inherit.md)
+* [接口](interface.md)

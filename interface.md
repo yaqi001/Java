@@ -5,7 +5,7 @@
 2. interface 关键字
 
    ~~~ java
-   // 定义接口
+   // 定义接口，注意如果定义接口和方法都没有写 abstract，也可以，因为系统会默认将 abstract 加上。
    修饰符 abstract interface 接口名 [extends 父接口0, 父接口1, 父接口2 ...]
    {
 		// 0 ~ n 个常量定义

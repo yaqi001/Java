@@ -3,7 +3,9 @@
 参考博客：[http://www.cnblogs.com/chenssy/p/3388487.html](http://www.cnblogs.com/chenssy/p/3388487.html)
 
 * **成员内部类**
-  带有内部类的外部类在编译完成后，你会发现不仅仅只有一个 **.class** 文件。
+  * 带有内部类的外部类在编译完成后，你会发现不仅仅只有一个 **.class** 文件。
+  * **内部类只是编译时的概念，一旦编译成功后，内部类与外部类就是完全不同的两个类（不过，还有一些联系）。对于一个名为 `Test` 的外部类 & `SubTest` 的成员内部类和 `StaticSubTest` 的静态内部类，在编译成功后会出现三个 `.class` 文件：`Test.class`，`Test$StaticSubTest.class` 和 `Test$SubTest.class`。**
+  * 成员内部类中不可以有静态变量和静态方法，但是使用 static final 修饰的变量是可以使用的。这是为什么？？？？？
 
   ~~~ java
   public class Test {
@@ -52,7 +54,9 @@
   public class Test {
 	  public static void main(String[] args){
 		  OutterClass oc = new OutterClass();
-		  OutterClass.InnerClass ic = oc.new InnerClass(); // 这里内部类引用的类型是 OutterClass.InnerClass，如果指明 OutterClass 的话，使用上面的 import 语句也可以！
+		  // 这里内部类引用的类型是 OutterClass.InnerClass，
+        //如果指明 OutterClass 的话，使用上面的 import 语句也可以！
+        OutterClass.InnerClass ic = oc.new InnerClass();
 	  }
   }
   ~~~
@@ -63,26 +67,81 @@
   ~~~
   
   --------
+  
+  ~~~ java
+  public class OutterClass {
+	  private String name = "OutterClass";
+	  private int age;
+	  public OutterClass(){
+		  System.out.println("OutterClass 构造方法");
+		  System.out.println("外部类访问内部类的 name = " + this.new InnerClass().name);
+	  }
+	  public class InnerClass {
+		  private String name = "InnerClass";
+		  private double score;
+		  public InnerClass(){
+			  System.out.println("InnerClass 构造方法");
+			  System.out.println("内部类访问外部类的 name = " + OutterClass.this.name);
+		  }
+	  }
+  }
+  public class Test {
+	  public static void main(String[] args){
+		  OutterClass oc = new OutterClass();
+		  System.out.println("=============================");
+		  OutterClass.InnerClass ic = oc.new InnerClass();
+	  }
+  }
+  ~~~
+  ~~~ bash
+  // 运行结果
+  OutterClass 构造方法
+  InnerClass 构造方法
+  内部类访问外部类的 name = OutterClass
+  外部类访问内部类的 name = InnerClass
+  =============================
+  InnerClass 构造方法
+  内部类访问外部类的 name = OutterClass
+  ~~~
+
+  --------
+
   ~~~ java
   public class OutterClass { // 定义外部类
 	  private int out_v = 1;
 	  private int hah = out_v; // 本类中的私有属性不是只能被方法访问，也可以被其他的私有成员变量访问
 	  private String same = "外部";
 	  private void out_f(){
-		  System.out.println("外部类中的成员变量 out_v = " + out_v); // 访问本外部类的私有属性
-		  System.out.println("外部类的方法访问内部类中的私有成员变量 name = " + ((new OutterClass()).new InnerClass()).name); // 访问内部类中的非同名私有成员变量
-        System.out.println("外部类的方法访问内部类中的同名成员变量 same：" + (this.new InnerClass()).same); // 访问内部类中的同名私有成员变量。输出：内部
-        System.out.println("访问自己的有两种方式" + this.same + same); // 输出：外部外部
+        // 访问本外部类的私有属性
+		  System.out.println("外部类中的成员变量 out_v = " + out_v);
+   
+        // 访问内部类中的非同名私有成员变量
+		  System.out.println("外部类的方法访问内部类中的私有成员变量 name = " + ((new OutterClass()).new InnerClass()).name);
+
+        // 访问内部类中的同名私有成员变量。输出：内部
+        System.out.println("外部类的方法访问内部类中的同名成员变量 same：" + (this.new InnerClass()).same);
+
+        // 输出：外部外部
+        System.out.println("访问自己的有两种方式" + this.same + same);
 	  }
 	  private class InnerClass{ // 定义内部类
 		  private String name = "InnerClass"; 
 		  private String same = "内部";
 		  private void inner_f(){
-			  System.out.println("内部类访问外部类的私有成员变量 out_v = " + out_v + "=====" + hah); // 访问外部类中非同名的私有变量！！！！！
-           System.out.println("内部类访问外部类的同名私有成员变量，OutterClass.this.same：" + OutterClass.this.same); // 访问外部类中同名的私有变量！！！！！输出：外部
-           System.out.println("OutterClass.this：" + OutterClass.this); // OutterClass.this：staticInnerClass.OutterClass@2a139a55
-           System.out.println("InnerClass.this：" + InnerClass.this); // InnerClass.this：staticInnerClass.OutterClass$InnerClass@15db9742
-           System.out.println("访问自己的有两种方式" + this.same + same); // 输出：内部内部
+           // 访问外部类中非同名的私有变量！！！！！
+			  System.out.println("内部类访问外部类的私有成员变量 out_v = " + out_v + "=====" + hah);
+
+           // 访问外部类中同名的私有变量！！！！！输出：外部
+           System.out.println("内部类访问外部类的同名私有成员变量，OutterClass.this.same：" + OutterClass.this.same);
+
+           // OutterClass.this：staticInnerClass.OutterClass@2a139a55
+           System.out.println("OutterClass.this：" + OutterClass.this);
+
+           // InnerClass.this：staticInnerClass.OutterClass$InnerClass@15db9742
+           System.out.println("InnerClass.this：" + InnerClass.this);
+
+           // 输出：内部内部
+           System.out.println("访问自己的有两种方式" + this.same + same);
 		  } 
 	  }
 	  public OutterClass(){

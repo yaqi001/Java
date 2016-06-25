@@ -13,8 +13,10 @@
   ~~~
 
 * 该类成员，也就是被 static 修饰了的成员变量只要被不管是类调用改变的还是对象调用改变的，只要变了就是变了！
+
   ~~~ java
-  public class Telephone { //1. 定义类
+  // 1. 定义类
+  public class Telephone {
 	  //2. 属性（成员变量）
 	  static float screen = 100f;
 	  float cpu;
@@ -37,7 +39,6 @@
 		  System.out.println("screen:" + screen + "\n" + "cpu:" + cpu);
 	  }
   }
-	  
 
   public class InitialTelphone {
 		public static void main(String[] args) {
@@ -53,8 +54,8 @@
 			System.out.println(tp1.screen);
 			System.out.println(Telephone.screen);
 		}
-	}
-   ~~~ 
+  }
+  ~~~ 
 
 
 * 关于静态方法和普通方法的阐述：
